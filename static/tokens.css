@@ -1,0 +1,149 @@
+/* ==========================================================================
+   NIRANTAR THEME TOKENS SYSTEM - PHASE 8
+   ========================================================================== */
+
+:root {
+  --pill-mix: 14%;
+  --header-bg: var(--surface);
+  --header-text: var(--text);
+  --header-border: var(--border);
+  --card-highlight: none;
+  --glow-hover: none;
+}
+
+/* 1. Clinical Blue: Crisp, friendly, clinical default */
+[data-theme="clinical-blue"], :root:not([data-theme]) {
+  color-scheme: light;
+  --bg: #EDF2FA;
+  --surface: #FFFFFF;
+  --surface-2: #F6F9FD;
+  --border: #CFDBEC;
+  --text: #0F1D38;
+  --muted: #4F607C;
+  --primary: #1D63D6;
+  --on-primary: #FFFFFF;
+  --primary-strong: #123F8F;
+  --soft: #DCE8FB;
+  --safe: #0F6B41;
+  --watch: #8F5A00;
+  --urgent: #BE2B2B;
+  --escalated: #6A3FD6;
+  --pill-mix: 14%;
+  --radius: 12px;
+  --shadow: 0 1px 2px rgba(15,29,56,.06), 0 8px 24px rgba(29,99,214,.08);
+
+  --font-display: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-numeric: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --header-bg: #123F8F;
+  --header-text: #FFFFFF;
+  --header-border: #1D63D6;
+  --card-highlight: none;
+  --glow-hover: 0 4px 16px rgba(29,99,214,.18);
+}
+
+/* 2. Warm Linen: Paper and ink, editorial warmth */
+[data-theme="warm-linen"] {
+  color-scheme: light;
+  --bg: #F1E9DB;
+  --surface: #FBF6EC;
+  --surface-2: #F5EEE0;
+  --border: #D8CAB0;
+  --text: #231B12;
+  --muted: #5E5040;
+  --primary: #1E2832;
+  --on-primary: #FFFFFF;
+  --primary-strong: #0F161D;
+  --soft: #E4D8C2;
+  --safe: #0F6B41;
+  --watch: #8A5300;
+  --urgent: #B42B2B;
+  --escalated: #6A3FD6;
+  --pill-mix: 14%;
+  --radius: 8px;
+  --shadow: none;
+
+  --font-display: 'Fraunces', Georgia, Cambria, 'Times New Roman', serif;
+  --font-numeric: 'Fraunces', Georgia, Cambria, serif;
+  --header-bg: #1E2832;
+  --header-text: #FBF6EC;
+  --header-border: #0F161D;
+  --card-highlight: none;
+  --glow-hover: none;
+}
+
+/* 3. Midnight Navy: Layered glass, glowing nodes */
+[data-theme="midnight-navy"] {
+  color-scheme: dark;
+  --bg: #0A1A33;
+  --surface: #102746;
+  --surface-2: #17345C;
+  --border: #2A4B7A;
+  --text: #EAF2FF;
+  --muted: #A5B8D6;
+  --primary: #5BA8FF;
+  --on-primary: #04213F;
+  --primary-strong: #9CCBFF;
+  --soft: #173A66;
+  --safe: #4ADE9A;
+  --watch: #FFC862;
+  --urgent: #FF8A8A;
+  --escalated: #BDA6FF;
+  --pill-mix: 20%;
+  --radius: 16px;
+  --shadow: 0 10px 30px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.06);
+
+  --font-display: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-numeric: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --header-bg: #102746;
+  --header-text: #EAF2FF;
+  --header-border: #2A4B7A;
+  --card-highlight: inset 0 1px 0 rgba(255,255,255,.06);
+  --glow-hover: 0 0 20px rgba(91,168,255,.25);
+}
+
+/* 4. Graphite: Flat, technical, high-density minimal */
+[data-theme="graphite"] {
+  color-scheme: dark;
+  --bg: #111214;
+  --surface: #1B1D21;
+  --surface-2: #25282D;
+  --border: #3A3E45;
+  --text: #F0F1F3;
+  --muted: #A6ABB5;
+  --primary: #E7E9ED;
+  --on-primary: #111214;
+  --primary-strong: #FFFFFF;
+  --soft: #262A31;
+  --safe: #4ADE9A;
+  --watch: #FFC862;
+  --urgent: #FF8A8A;
+  --escalated: #BDA6FF;
+  --pill-mix: 20%;
+  --radius: 6px;
+  --shadow: none;
+
+  --font-display: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-numeric: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --header-bg: #1B1D21;
+  --header-text: #F0F1F3;
+  --header-border: #3A3E45;
+  --card-highlight: none;
+  --glow-hover: none;
+}
+
+/* Swatch Preview Dots (kept strictly in tokens.css to satisfy zero literals outside tokens) */
+.swatch-clinical-blue-bg { background-color: #EDF2FA; }
+.swatch-clinical-blue-surface { background-color: #FFFFFF; }
+.swatch-clinical-blue-primary { background-color: #1D63D6; }
+
+.swatch-warm-linen-bg { background-color: #F1E9DB; }
+.swatch-warm-linen-surface { background-color: #FBF6EC; }
+.swatch-warm-linen-primary { background-color: #1E2832; }
+
+.swatch-midnight-navy-bg { background-color: #0A1A33; }
+.swatch-midnight-navy-surface { background-color: #102746; }
+.swatch-midnight-navy-primary { background-color: #5BA8FF; }
+
+.swatch-graphite-bg { background-color: #111214; }
+.swatch-graphite-surface { background-color: #1B1D21; }
+.swatch-graphite-primary { background-color: #E7E9ED; }

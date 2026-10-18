@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="clinical-blue">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nirantar | Continuous Care & Case Escalation</title>
+  
+  <!-- Tiny inline script in <head> to prevent flash of wrong theme -->
+  <script>
+    (function() {
+      var saved = localStorage.getItem('nirantar_theme');
+      if (!saved) {
+        var isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        saved = isDark ? 'midnight-navy' : 'clinical-blue';
+      }
+      document.documentElement.setAttribute('data-theme', saved);
+    })();
+  </script>
+
+  <!-- External & Fallback Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;700;800&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ======================== AUTH SCREEN ======================== -->
+  <div id="authScreen" style="min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; position:relative; overflow:hidden;">
+    
+    <!-- Top-Right Theme Controls on Auth Screen -->
+    <div style="position:absolute; top:20px; right:20px; z-index:10; display:flex; align-items:center; gap:8px;">
+      <button class="theme-toggle-btn" id="authThemeQuickToggle" onclick="toggleLightDarkTheme()" title="Quick toggle Light / Dark mode" aria-label="Toggle Light/Dark theme">
+        <span id="authQuickToggleIcon">🌙</span>
+      </button>
+      <div class="theme-switcher-group">
+        <button class="btn btn-secondary" onclick="toggleThemeMenu('authThemeMenuPanel')" aria-haspopup="true" aria-expanded="false" style="padding:6px 12px; font-size:12px; display:flex; align-items:center; gap:6px;">
+          <span>🎨</span>
+          <span class="theme-name-display" style="font-weight:700;">Clinical Blue</span>
+        </button>
+        <div id="authThemeMenuPanel" class="theme-menu-panel" role="menu" aria-label="Theme Selector">
+          <div class="theme-group-label">Light Themes</div>
+          <div class="theme-options-grid">
+            <button type="button" role="menuitem" class="theme-option-card" onclick="selectTheme('clinical-blue')" id="authOpt-clinical-blue">
+              <div class="theme-preview-dots">
+                <div class="dot-bg swatch-clinical-blue-bg"></div>
+                <div class="dot-surface swatch-clinical-blue-surface"></div>
+                <div class="dot-primary swatch-clinical-blue-primary"></div>
+              </div>
+              <div class="theme-option-name">Clinical Blue</div>
+            </button>
+            <button type="button" role="menuitem" class="theme-option-card" onclick="selectTheme('warm-linen')" id="authOpt-warm-linen">
+              <div class="theme-preview-dots">
+                <div class="dot-bg swatch-warm-linen-bg"></div>
+                <div class="dot-surface swatch-warm-linen-surface"></div>
+                <div class="dot-primary swatch-warm-linen-primary"></div>
+              </div>
+              <div class="theme-option-name">Warm Linen</div>
+            </button>
+          </div>
+          <div class="theme-group-label">Dark Themes</div>
+          <div class="theme-options-grid">
+            <button type="button" role="menuitem" class="theme-option-card" onclick="selectTheme('midnight-navy')" id="authOpt-midnight-navy">
+              <div class="theme-preview-dots">
+                <div class="dot-bg swatch-midnight-navy-bg"></div>
+                <div class="dot-surface swatch-midnight-navy-surface"></div>
+                <div class="dot-primary swatch-midnight-navy-primary"></div>
+              </div>
+              <div class="theme-option-name">Midnight Navy</div>
+            </button>
+            <button type="button" role="menuitem" class="theme-option-card" onclick="selectTheme('graphite')" id="authOpt-graphite">
+              <div class="theme-preview-dots">
+                <div class="dot-bg swatch-graphite-bg"></div>
+                <div class="dot-surface swatch-graphite-surface"></div>
+                <div class="dot-primary swatch-graphite-primary"></div>
+              </div>
+              <div class="theme-option-name">Graphite</div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Background ECG Graphic -->
+    <svg style="position:absolute; width:100%; height:100%; pointer-events:none; z-index:0;" viewBox="0 0 1200 600" preserveAspectRatio="none">
+      <path class="ecg-line" d="M 0 300 L 300 300 L 320 280 L 335 340 L 350 210 L 370 380 L 385 300 L 410 300 L 430 260 L 450 300 L 800 300 L 820 280 L 835 340 L 850 210 L 870 380 L 885 300 L 1200 300" />
+    </svg>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; max-width:1040px; width:100%; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; position:relative; z-index:1;">
+      
+      <!-- Brand Left Panel -->
+      <div style="background:var(--surface-2); padding:48px 40px; display:flex; flex-direction:column; justify-content:space-between; border-right:1px solid var(--border);">
+        <div>
+          <div style="display:flex; align-items:center; gap:12px; margin-bottom:24px;">
+            <div style="width:44px; height:44px; background:var(--primary); border-radius:var(--radius); display:flex; align-items:center; justify-content:center; color:var(--on-primary);">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+                <path d="M12 5v14"></path>
+                <path d="M5 12h14"></path>
+              </svg>
+            </div>
+            <div>
+              <div style="font-size:24px; font-weight:800; color:var(--primary-strong); font-family:var(--font-display);">Nirantar</div>
+              <div style="font-size:12px; font-weight:600; color:var(--primary);">Predict. Ask why. Act. Learn.</div>
+            </div>
+          </div>
+
+          <h1 style="font-size:32px; font-weight:800; color:var(--text); line-height:1.2; margin-bottom:12px;">
+            Nobody drops out of care.
+          </h1>
+          <p style="font-size:14px; color:var(--muted); line-height:1.6; margin-bottom:32px;">
+            Proactive non-adherence intervention and automated clinical escalation for hypertension, diabetes, and tuberculosis patients in rural health networks.
+          </p>
+
+          <!-- 3 Stats from Seed Data -->
+          <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; margin-bottom:24px;">
+            <div class="card" style="padding:14px; text-align:center;">
+              <div style="font-size:22px; font-weight:800; color:var(--primary);" class="stat-number" id="authStatPatients">14</div>
+              <div style="font-size:11px; color:var(--muted); font-weight:600;">Patients Tracked</div>
+              <div style="font-size:10px; color:var(--text); font-weight:600;">demo data</div>
+            </div>
+            <div class="card" style="padding:14px; text-align:center;">
+              <div style="font-size:22px; font-weight:800; color:var(--safe);" class="stat-number" id="authStatReason">100%</div>
+              <div style="font-size:11px; color:var(--muted); font-weight:600;">Reason Capture</div>
+              <div style="font-size:10px; color:var(--text); font-weight:600;">demo data</div>
+            </div>
+            <div class="card" style="padding:14px; text-align:center;">
+              <div style="font-size:22px; font-weight:800; color:var(--primary-strong);" class="stat-number" id="authStatReturn">86%</div>
+              <div style="font-size:11px; color:var(--muted); font-weight:600;">Rescue Return</div>
+              <div style="font-size:10px; color:var(--text); font-weight:600;">demo data</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Demo Mode Quick Logins -->
+        <div id="demoLoginButtons" style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:16px;">
+          <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--muted); margin-bottom:10px; display:flex; justify-content:space-between;">
+            <span>One-Click Demo Access</span>
+            <span class="pill pill-safe" style="font-size:10px; padding:2px 6px;">DEMO_MODE=true</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <button class="btn btn-secondary" style="justify-content:flex-start; padding:8px 12px;" onclick="demoLogin('vikram.pm@nirantar.org')">
+              <span style="width:20px; text-align:center;">👔</span>
+              <span><strong>Enter as Manager</strong> (Vikram Malhotra - PM)</span>
+            </button>
+            <button class="btn btn-secondary" style="justify-content:flex-start; padding:8px 12px;" onclick="demoLogin('sunita.worker@nirantar.org')">
+              <span style="width:20px; text-align:center;">🩺</span>
+              <span><strong>Enter as Field Worker</strong> (Sunita Sharma - W-101)</span>
+            </button>
+            <button class="btn btn-secondary" style="justify-content:flex-start; padding:8px 12px;" onclick="demoLogin('rajesh.sup@nirantar.org')">
+              <span style="width:20px; text-align:center;">📋</span>
+              <span><strong>Enter as Supervisor</strong> (Dr. Rajesh Rao)</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Auth Form Right Panel -->
+      <div style="padding:40px 36px; display:flex; flex-direction:column; justify-content:center;">
+        
+        <!-- Toggle: Manager vs Field Worker -->
+        <div style="display:flex; background:var(--surface-2); padding:4px; border-radius:var(--radius); margin-bottom:20px; border:1px solid var(--border);">
+          <button id="authPersonaMgr" class="btn" style="flex:1; border:none; background:var(--surface); color:var(--primary); font-size:12px; font-weight:700;" onclick="setAuthPersona('manager')">
+            I'm a Manager
+          </button>
+          <button id="authPersonaWorker" class="btn" style="flex:1; border:none; background:transparent; color:var(--muted); font-size:12px;" onclick="setAuthPersona('worker')">
+            I'm a Field Worker
+          </button>
+        </div>
+
+        <!-- Mode: Login vs Signup -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+          <h2 style="font-size:20px; font-weight:700; color:var(--text);" id="authFormTitle">Sign In to Nirantar</h2>
+          <div style="font-size:13px; color:var(--muted);">
+            <span id="authTogglePrompt">Need an account?</span>
+            <a href="#" style="color:var(--primary); font-weight:600; text-decoration:none;" id="authToggleLink" onclick="toggleAuthMode(event)">Sign Up</a>
+          </div>
+        </div>
+
+        <div id="authErrorAlert" style="display:none; background:color-mix(in srgb, var(--urgent) var(--pill-mix), var(--surface)); border:1px solid var(--urgent); border-radius:var(--radius); padding:10px 14px; font-size:13px; color:var(--urgent); margin-bottom:16px;"></div>
+
+        <!-- Form -->
+        <form id="authMainForm" onsubmit="handleAuthSubmit(event)">
+          <div id="signupOnlyFields" style="display:none;">
+            <div style="margin-bottom:12px;">
+              <label style="display:block; font-size:11px; font-weight:700; text-transform:uppercase; color:var(--muted); margin-bottom:4px;">Full Name</label>
+              <input type="text" id="authNameInput" placeholder="e.g. Dr. Kavita Sharma" style="width:100%; padding:9px 12px; border-radius:var(--radius); border:1px solid var(--border); background:var(--surface-2); color:var(--text); font-size:13px;">
+            </div>
+
+            <div style="margin-bottom:12px;">
+              <label style="display:block; font-size:11px; font-weight:700; text-transform:uppercase; color:var(--muted); margin-bottom:6px;">Select Role</label>
+              <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:8px;" id="roleCardsGrid">
+                <!-- Populated dynamically based on persona -->
+              </div>
+            </div>
+
+            <div style="margin-bottom:12px;">
+              <label style="display:block; font-size:11px; font-weight:700; text-transform:uppercase; color:var(--muted); margin-bottom:4px;">
+                NGO Invite Code
+              </label>
+              <input type="text" id="authInviteInput" placeholder="Enter valid NGO invite code" style="width:100%; padding:9px 12px; border-radius:var(--radius); border:1px solid var(--border); background:var(--surface-2); color:var(--text); font-size:13px;">
+              <div style="font-size:11px; color:var(--muted); margin-top:3px;">
+                Use <code style="background:var(--soft); padding:1px 4px; border-radius:3px;">NIRANTAR_MGR_2026</code> or <code style="background:var(--soft); padding:1px 4px; border-radius:3px;">NIRANTAR_FIELD_2026</code>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-bottom:12px;">
+            <label style="display:block; font-size:11px; font-weight:700; text-transform:uppercase; color:var(--muted); margin-bottom:4px;">Email Address</label>
+            <input type="email" id="authEmailInput" required placeholder="name@nirantar.org" style="width:100%; padding:9px 12px; border-radius:var(--radius); border:1px solid var(--border); background:var(--surface-2); color:var(--text); font-size:13px;">
+          </div>
+
+          <div style="margin-bottom:16px;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+              <label style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--muted);">Password</label>
+              <span style="font-size:11px; color:var(--primary); cursor:pointer; font-weight:600;" onclick="togglePasswordVisibility()">Show</span>
+            </div>
+            <input type="password" id="authPasswordInput" required minlength="8" placeholder="••••••••" style="width:100%; padding:9px 12px; border-radius:var(--radius); border:1px solid var(--border); background:var(--surface-2); color:var(--text); font-size:13px;" oninput="updatePasswordStrength(this.value)">
+            
+            <!-- Password Strength Meter -->
+            <div id="passwordStrengthBox" style="display:none; margin-top:6px;">
+              <div style="height:4px; background:var(--border); border-radius:2px; overflow:hidden;">
+                <div id="passwordStrengthBar" style="height:100%; width:0%; transition:width 200ms ease; background:var(--primary);"></div>
+              </div>
+              <div id="passwordStrengthText" style="font-size:10px; color:var(--muted); margin-top:2px;">Min 8 characters</div>
+            </div>
+          </div>
+
+          <button type="submit" id="authSubmitBtn" class="btn btn-primary" style="width:100%; padding:10px; font-size:14px;">
+            Sign In
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== APPLICATION WRAPPER ======================== -->
+  <div id="appScreen" style="display:none;">
+
+    <!-- TOP STICKY BAR -->
+    <header class="header-bar">
+      <div class="brand-badge">
+        <div class="brand-icon-box">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+            <path d="M12 5v14"></path>
+            <path d="M5 12h14"></path>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-title">Nirantar</div>
+          <div class="brand-sub">District Chronic Care Engine · Phase 8</div>
+        </div>
+      </div>
+
+      <!-- Center Controls: Demo Clock & Advance Button -->
+      <div style="display:flex; align-items:center; gap:8px;">
+        <div style="display:flex; align-items:center; gap:8px; background:var(--surface-2); border:1px solid var(--border); padding:5px 12px; border-radius:var(--radius); font-size:13px; font-weight:700; color:var(--text);">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          <span id="appDemoClockDisplay" class="stat-number">Oct 18, 2026</span>
+        </div>
+
+        <button class="btn btn-primary" onclick="advanceDemoClock(1)" title="Advance demo clock by 1 day" id="btnAdvanceClock">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="13 17 18 12 13 7"></polyline><polyline points="6 17 11 12 6 7"></polyline></svg>
+          Advance 1 day
+        </button>
+
+        <button class="btn btn-purple" onclick="triggerEscalationEngine()" title="Execute escalation rules against demo clock" id="btnRunEsc">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+          Run Escalation
+        </button>
+      </div>
+
+      <!-- Right Controls: Theme Switcher, Guided Demo, User Chip -->
+      <div style="display:flex; align-items:center; gap:10px;">
+        
+        <!-- Guided Demo Stepper Button -->
+        <button class="btn btn-secondary" onclick="toggleGuidedDemo()" style="padding:6px 10px; font-size:12px;">
+          <span>✨</span>
+          <span>Guided Demo</span>
+        </button>
+
+        <!-- Phase 8 Theme Switcher: Sun/Moon Quick Toggle + 4-Theme Menu -->
+        <div style="display:flex; align-items:center; gap:6px;">
+          <button class="theme-toggle-btn" id="headerThemeQuickToggle" onclick="toggleLightDarkTheme()" title="Quick toggle Light / Dark mode" aria-label="Toggle Light/Dark theme">
+            <span id="headerQuickToggleIcon">🌙</span>
+          </button>
+
+          <div class="theme-switcher-group">
+            <button class="btn btn-secondary" onclick="toggleThemeMenu('headerThemeMenuPanel')" aria-haspopup="true" aria-expanded="false" style="padding:6px 10px; font-size:12px; display:flex; align-items:center; gap:6px;">
+              <span>🎨</span>
+              <span class="theme-name-display" style="font-weight:700;">Clinical Blue</span>
+            </button>
+            <div id="headerThemeMenuPanel" class="theme-menu-panel" role="menu" aria-label="Theme Selector">
+              <div class="theme-group-label">Light Themes</div>
+              <div class="theme-options-grid">
+                <button type="button" role="menuitem" class="theme-option-card" onclick="selectTheme('clinical-blue')" id="opt-clinical-blue">
+                  <div class="theme-preview-dots">
+                    <div class="dot-bg swatch-clinical-blue-bg"></div>
+                    <div class="dot-surface swatch-clinical-blue-surface"></div>
+                    <div class="dot-primary swatch-clinical-blue-primary"></div>
+                  </div>
+                  <div class="theme-option-name">Clinical Blue</div>
+                </button>
+                <button type="button" role="menuitem" class="theme-option-card" onclick="selectTheme('warm-linen')" id="opt-warm-linen">
+                  <div class="theme-preview-dots">
+                    <div class="dot-bg swatch-warm-linen-bg"></div>
+                    <div class="dot-surface swatch-warm-linen-surface"></div>
+                    <div class="dot-primary swatch-warm-linen-primary"></div>
+                  </div>
+                  <div class="theme-option-name">Warm Linen</div>
+                </button>
+              </div>
+              <div class="theme-group-label">Dark Themes</div>
+              <div class="theme-options-grid">
+                <button type="button" role="menuitem" class="theme-option-card" onclick="selectTheme('midnight-navy')" id="opt-midnight-navy">
+                  <div class="theme-preview-dots">
+                    <div class="dot-bg swatch-midnight-navy-bg"></div>
+                    <div class="dot-surface swatch-midnight-navy-surface"></div>
+                    <div class="dot-primary swatch-midnight-navy-primary"></div>
+                  </div>
+                  <div class="theme-option-name">Midnight Navy</div>
+                </button>
+                <button type="button" role="menuitem" class="theme-option-card" onclick="selectTheme('graphite')" id="opt-graphite">
+                  <div class="theme-preview-dots">
+                    <div class="dot-bg swatch-graphite-bg"></div>
+                    <div class="dot-surface swatch-graphite-surface"></div>
+                    <div class="dot-primary swatch-graphite-primary"></div>
+                  </div>
+                  <div class="theme-option-name">Graphite</div>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- User Chip & Logout -->
+        <div style="display:flex; align-items:center; gap:8px; padding-left:6px; border-left:1px solid var(--border);">
+          <div style="width:32px; height:32px; border-radius:50%; background:var(--primary); color:var(--on-primary); font-weight:700; font-size:12px; display:flex; align-items:center; justify-content:center;" id="userAvatarInitials">
+            VM
+          </div>
+          <div>
+            <div style="font-size:12px; font-weight:700; color:var(--header-text); line-height:1.1;" id="userProfileName">Vikram Malhotra</div>
+            <div style="font-size:10px; color:var(--header-text); opacity:0.85; font-weight:600;" id="userProfileRole">program_manager</div>
+          </div>
+          <button class="btn btn-secondary" style="padding:4px 8px; font-size:11px;" onclick="handleLogout()" title="Sign out">
+            Logout
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- STICKY SECTION NAV WITH SCROLL-SPY (Manager only) -->
+    <div class="section-nav-bar" id="managerSectionNav">
+      <a class="section-nav-link active" onclick="scrollToSection('secScorecard')">Scorecard</a>
+      <a class="section-nav-link" onclick="scrollToSection('secCaseQueue')">Case Queue</a>
+      <a class="section-nav-link" onclick="scrollToSection('secGapAnalysis')">Gap Ranking & Map</a>
+      <a class="section-nav-link" onclick="scrollToSection('secWhatWorks')">What Works</a>
+    </div>
+
+    <!-- MAIN BODY CONTAINER -->
+    <main style="max-width:1380px; margin:0 auto; padding:20px 24px 60px;">
+
+      <!-- ==================== MANAGER DASHBOARD ==================== -->
+      <div id="managerDashboardView">
+        
+        <!-- 1. SCORECARD -->
+        <section id="secScorecard" style="margin-bottom:36px; scroll-margin-top:110px;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:14px;">
+            <div>
+              <div style="font-size:13px; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:0.5px;">District Overview</div>
+              <h2 style="font-size:20px; font-weight:800; color:var(--text);">
+                <span id="managerGreeting">Welcome back</span> · Manager Scorecard
+              </h2>
+            </div>
+            <div style="display:flex; gap:8px;">
+              <button class="btn btn-secondary" onclick="confirmResetDemo()" style="font-size:12px;">
+                ↺ Reset Demo Data
+              </button>
+            </div>
+          </div>
+
+          <!-- Section Error Alert Box (if API fails) -->
+          <div id="scorecardErrorBox" style="display:none;" class="section-state-box">
+            <div class="state-icon">⚠</div>
+            <div class="state-title">Unable to load scorecard</div>
+            <div class="state-desc">The server could not be reached. Please check backend connection and retry.</div>
+            <button class="btn btn-primary" onclick="fetchScorecard()">Retry</button>
+          </div>
+
+          <div id="scorecardCardsGrid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:14px;">
+            <!-- Active Cohort -->
+            <div class="card" style="padding:16px 18px;">
+              <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--muted); margin-bottom:6px;">Active Patients</div>
+              <div style="font-size:28px; font-weight:800; color:var(--primary);" class="stat-number count-up" id="statActivePatients">--</div>
+              <div style="font-size:11px; color:var(--muted); margin-top:4px;">Under management</div>
+            </div>
+
+            <!-- Patients At Risk -->
+            <div class="card" style="padding:16px 18px;">
+              <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--muted); margin-bottom:6px;">Patients At Risk</div>
+              <div style="font-size:28px; font-weight:800; color:var(--urgent);" class="stat-number count-up" id="statPatientsAtRisk">--</div>
+              <div style="font-size:11px; color:var(--muted); margin-top:4px;">
+                <span class="pill pill-urgent" style="font-size:10px; padding:2px 6px;">Urgent (risk &ge; 0.6)</span>
+              </div>
+            </div>
+
+            <!-- Follow-up Completion Rate -->
+            <div class="card" style="padding:16px 18px;">
+              <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--muted); margin-bottom:6px;">Completion Rate</div>
+              <div style="font-size:28px; font-weight:800; color:var(--safe);" class="stat-number" id="statCompletionRate">--%</div>
+              <div style="font-size:11px; color:var(--muted); margin-top:4px;" id="statCompletionRatio">Resolved / All Cases</div>
+            </div>
+
+            <!-- Median Days to Resolve -->
+            <div class="card" style="padding:16px 18px;">
+              <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--muted); margin-bottom:6px;">Median Days to Resolve</div>
+              <div style="font-size:28px; font-weight:800; color:var(--text);" class="stat-number" id="statMedianDays">-- <span style="font-size:13px; font-weight:500; color:var(--muted);">days</span></div>
+              <div style="font-size:11px; color:var(--muted); margin-top:4px;">Assignment to resolution</div>
+            </div>
+
+            <!-- Open & Escalated -->
+            <div class="card" style="padding:16px 18px;" id="tileEscalated">
+              <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--muted); margin-bottom:6px;">Open & Escalated</div>
+              <div style="font-size:28px; font-weight:800; color:var(--escalated);" class="stat-number count-up" id="statOpenEscalated">--</div>
+              <div style="font-size:11px; color:var(--muted); margin-top:4px;">Actionable caseload</div>
+            </div>
+
+            <!-- Cases Past Due -->
+            <div class="card" style="padding:16px 18px;">
+              <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--muted); margin-bottom:6px;">Cases Past Due</div>
+              <div style="font-size:28px; font-weight:800; color:var(--urgent);" class="stat-number count-up" id="statPastDue">--</div>
+              <div style="font-size:11px; color:var(--muted); margin-top:4px;">Due date &lt; Demo date</div>
+            </div>
+
+            <!-- Cases By Worker -->
+            <div class="card" style="padding:16px 18px;">
+              <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--muted); margin-bottom:6px;">Cases By Worker</div>
+              <div id="statWorkersList" style="font-size:11px; font-weight:600; display:flex; flex-direction:column; gap:2px;">
+                <!-- Populated dynamically -->
+              </div>
+            </div>
+
+            <!-- Coordinator Hours Saved (Assumption) -->
+            <div class="card" style="padding:16px 18px; border-color:var(--primary);">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <span style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--muted);">Hours Saved</span>
+                <span class="pill" style="font-size:9px; background:var(--soft); color:var(--primary-strong); padding:2px 5px; font-weight:700;">ASSUMPTION</span>
+              </div>
+              <div style="font-size:28px; font-weight:800; color:var(--primary);" class="stat-number" id="statHoursSaved">-- <span style="font-size:13px; font-weight:500; color:var(--muted);">hrs</span></div>
+              <div style="display:flex; align-items:center; gap:8px; margin-top:6px;">
+                <span style="font-size:11px; color:var(--muted); font-weight:600;" id="statAssumptionLabel">25m / call</span>
+                <input type="range" min="5" max="60" step="5" value="25" id="assumptionRange" style="flex:1; accent-color:var(--primary);" oninput="handleAssumptionSlider(this.value)">
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. CASE QUEUE SECTION -->
+        <section id="secCaseQueue" style="margin-bottom:36px; scroll-margin-top:110px;">
+          <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:14px;">
+            <div>
+              <div style="font-size:13px; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:0.5px;">Active Workflow</div>
+              <h2 style="font-size:20px; font-weight:800; color:var(--text);">Case Queue & Escalation Management</h2>
+            </div>
+            <button class="btn btn-primary" onclick="openAssignTaskModal()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              Assign Task to Worker
+            </button>
+          </div>
+
+          <!-- Filter Toolbar -->
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px; flex-wrap:wrap;">
+            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+              <!-- Filter chips -->
+              <div style="display:flex; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden;">
+                <button class="btn active" id="chipFilterAll" onclick="setCaseChipFilter('all')" style="border:none; border-radius:0; padding:6px 12px; font-size:12px; background:var(--soft); color:var(--primary-strong); font-weight:700;">All</button>
+                <button class="btn" id="chipFilterEsc" onclick="setCaseChipFilter('escalated')" style="border:none; border-radius:0; padding:6px 12px; font-size:12px; background:transparent;">Escalated</button>
+                <button class="btn" id="chipFilterPast" onclick="setCaseChipFilter('past_due')" style="border:none; border-radius:0; padding:6px 12px; font-size:12px; background:transparent;">Past Due</button>
+                <button class="btn" id="chipFilterAssigned" onclick="setCaseChipFilter('assigned')" style="border:none; border-radius:0; padding:6px 12px; font-size:12px; background:transparent;">Assigned</button>
+                <button class="btn" id="chipFilterResolved" onclick="setCaseChipFilter('resolved')" style="border:none; border-radius:0; padding:6px 12px; font-size:12px; background:transparent;">Resolved</button>
+              </div>
+
+              <!-- Worker Filter Dropdown -->
+              <select id="filterWorkerSelect" onchange="renderCasesTableUI()" style="padding:6px 10px; border-radius:var(--radius); border:1px solid var(--border); background:var(--surface); color:var(--text); font-size:12px;">
+                <option value="">All Workers</option>
+                <option value="W-101">Sunita Sharma (W-101)</option>
+                <option value="W-102">Pooja Verma (W-102)</option>
+                <option value="W-103">Manoj Kumar (W-103)</option>
+                <option value="W-104">Rekha Patel (W-104)</option>
+              </select>
+
+              <!-- Village Filter Dropdown -->
+              <select id="filterVillageSelect" onchange="renderCasesTableUI()" style="padding:6px 10px; border-radius:var(--radius); border:1px solid var(--border); background:var(--surface); color:var(--text); font-size:12px;">
+                <option value="">All Villages</option>
+                <option value="VIL-1">Bilaspur Kalan</option>
+                <option value="VIL-2">Kalyanpur Basti</option>
+                <option value="VIL-3">Rampur Dehat</option>
+                <option value="VIL-4">Shivpur Khurd</option>
+                <option value="VIL-5">Haripur Mandi</option>
+                <option value="VIL-6">Chandpur Gaon</option>
+              </select>
+            </div>
+
+            <!-- Search Box & Counter -->
+            <div style="display:flex; align-items:center; gap:10px;">
+              <input type="text" id="caseSearchInput" placeholder="Search patient, village, worker..." oninput="renderCasesTableUI()" style="padding:6px 12px; border-radius:var(--radius); border:1px solid var(--border); background:var(--surface); color:var(--text); font-size:12px; width:220px;">
+              <span style="font-size:12px; color:var(--muted); font-weight:600;" id="caseCounterDisplay">Showing 8 of 14</span>
+            </div>
+          </div>
+
+          <!-- Case Table with required column order -->
+          <div class="card" style="overflow-x:auto;">
+            <!-- Error State for Queue -->
+            <div id="caseQueueErrorBox" style="display:none;" class="section-state-box">
+              <div class="state-icon">⚠</div>
+              <div class="state-title">Error loading cases</div>
+              <div class="state-desc">Could not synchronize case records with the server.</div>
+              <button class="btn btn-primary" onclick="fetchCases()">Retry</button>
+            </div>
+
+            <table style="width:100%; border-collapse:collapse; text-align:left; font-size:13px;" id="caseMasterTable">
+              <thead>
+                <tr>
+                  <th style="cursor:pointer;" onclick="toggleTableSort('patient')">
+                    Patient <span id="sortIndicator-patient" style="font-size:10px;">⇅</span>
+                  </th>
+                  <th style="cursor:pointer;" onclick="toggleTableSort('risk')">
+                    Condition & Risk <span id="sortIndicator-risk" style="font-size:10px;">⇅</span>
+                  </th>
+                  <th style="cursor:pointer;" onclick="toggleTableSort('village')">
+                    Village <span id="sortIndicator-village" style="font-size:10px;">⇅</span>
+                  </th>
+                  <th style="cursor:pointer;" onclick="toggleTableSort('worker')">
+                    Assigned Worker <span id="sortIndicator-worker" style="font-size:10px;">⇅</span>
+                  </th>
+                  <th style="cursor:pointer;" onclick="toggleTableSort('status')">
+                    Status & Escalation <span id="sortIndicator-status" style="font-size:10px;">⇅</span>
+                  </th>
+                  <th style="cursor:pointer;" onclick="toggleTableSort('due_date')">
+                    Due Date <span id="sortIndicator-due_date" style="font-size:10px;">⇅</span>
+                  </th>
+                  <th>Reason & Rescue</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="caseQueueTbody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+
+            <!-- Show more / show less row -->
+            <div id="showMoreContainer" style="display:none; padding:12px; text-align:center; border-top:1px solid var(--border);">
+              <button class="btn btn-secondary" onclick="toggleShowMoreRows()" id="btnShowMore" style="font-size:12px;">
+                Show More Cases
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. GAP RANKING & DISTRICT MAP -->
+        <section id="secGapAnalysis" style="margin-bottom:36px; scroll-margin-top:110px;">
+          <div style="margin-bottom:14px;">
+            <div style="font-size:13px; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:0.5px;">Health Equity & Access</div>
+            <h2 style="font-size:20px; font-weight:800; color:var(--text);">Gap Ranking & Village Map</h2>
+            <div style="font-size:13px; color:var(--muted); margin-top:2px;">
+              Explainable gap score: <strong>R = 40&times;High-risk %</strong> + <strong>D = min(30, 2.5&times;km)</strong> + <strong>S = min(30, 15&times;Stock-outs)</strong> out of 100
+            </div>
+          </div>
+
+          <div id="gapsErrorBox" style="display:none;" class="section-state-box">
+            <div class="state-icon">⚠</div>
+            <div class="state-title">Error loading gap analysis</div>
+            <div class="state-desc">Could not calculate village priority rankings and map telemetry.</div>
+            <button class="btn btn-primary" onclick="fetchGaps()">Retry</button>
+          </div>
+
+          <div id="gapsGridContainer" style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
+            <!-- Left Card: District Map -->
+            <div class="card" style="padding:20px; display:flex; flex-direction:column;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <span style="font-size:14px; font-weight:700; color:var(--text);">District Map: Villages & Facilities</span>
+                <span style="font-size:11px; color:var(--muted);">■ PHC/CHC · ● Villages</span>
+              </div>
+              
+              <div style="background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius); height:320px; position:relative; overflow:hidden;" id="mapSvgBox">
+                <!-- SVG injected dynamically -->
+              </div>
+
+              <!-- Selected Village Detail Panel -->
+              <div id="selectedVillagePanel" style="margin-top:14px; padding:12px 14px; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <div>
+                    <span style="font-size:14px; font-weight:800; color:var(--text);" id="selVilName">Kalyanpur Basti</span>
+                    <span style="font-size:12px; color:var(--muted); margin-left:8px;" id="selVilPop">Pop: 980</span>
+                  </div>
+                  <div>
+                    <span style="font-size:16px; font-weight:800; color:var(--primary);" class="stat-number" id="selVilScore">91.0</span>
+                    <span style="font-size:11px; color:var(--muted);">/100</span>
+                  </div>
+                </div>
+                <div style="display:flex; gap:16px; margin-top:8px; font-size:12px; color:var(--muted);">
+                  <div>High-risk: <strong style="color:var(--urgent);" id="selVilRisk">2 patients (100%)</strong></div>
+                  <div>Distance: <strong id="selVilDist">8.4 km</strong></div>
+                  <div>Stock-outs: <strong style="color:var(--urgent);" id="selVilStock">2 medicines</strong></div>
+                </div>
+                <div style="margin-top:8px;">
+                  <div class="stacked-bar" style="width:100%; height:8px;">
+                    <div class="stacked-risk" id="selVilBarR" style="width:40%;"></div>
+                    <div class="stacked-dist" id="selVilBarD" style="width:21%;"></div>
+                    <div class="stacked-stock" id="selVilBarS" style="width:30%;"></div>
+                  </div>
+                  <div style="display:flex; justify-content:space-between; font-size:10px; color:var(--muted); margin-top:3px;" id="selVilFactorsText">
+                    <span>R: 40.0 (High-risk %)</span>
+                    <span>D: 21.0 (Distance)</span>
+                    <span>S: 30.0 (Stockout)</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Card: Priority Ranking -->
+            <div class="card" style="padding:20px;">
+              <div style="font-size:14px; font-weight:700; color:var(--text); margin-bottom:4px;">Village Priority Ranking</div>
+              <div style="font-size:11px; color:var(--muted); margin-bottom:12px;">
+                Legend: <span style="color:var(--primary); font-weight:600;">High-risk % (40%)</span> / <span style="color:var(--watch); font-weight:600;">Distance (30%)</span> / <span style="color:var(--urgent); font-weight:600;">PHC Stock-out (30%)</span>
+              </div>
+
+              <div style="overflow-x:auto;">
+                <table style="width:100%; border-collapse:collapse; font-size:12px;">
+                  <thead>
+                    <tr>
+                      <th>Rank & Village</th>
+                      <th>Facility</th>
+                      <th>Dist</th>
+                      <th>Gap Score</th>
+                      <th>Factors</th>
+                    </tr>
+                  </thead>
+                  <tbody id="gapsRankingTbody">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. WHAT WORKS SECTION -->
+        <section id="secWhatWorks" style="margin-bottom:36px; scroll-margin-top:110px;">
+          <div style="margin-bottom:14px;">
+            <div style="font-size:13px; font-weight:700; color:var(--primary); text-transform:uppercase; letter-spacing:0.5px;">Clinical Evidence</div>
+            <h2 style="font-size:20px; font-weight:800; color:var(--text);">What Works (Evidence-Based Protocols)</h2>
+            <div style="font-size:13px; color:var(--muted); margin-top:2px;">
+              Historical intervention outcomes: Reason &times; Action return rates with days to return added
+            </div>
+          </div>
+
+          <div id="whatWorksErrorBox" style="display:none;" class="section-state-box">
+            <div class="state-icon">⚠</div>
+            <div class="state-title">Error loading protocols</div>
+            <div class="state-desc">Could not retrieve clinical outcomes data.</div>
+            <button class="btn btn-primary" onclick="fetchWhatWorks()">Retry</button>
+          </div>
+
+          <div class="card" style="overflow-x:auto;">
+            <table style="width:100%; border-collapse:collapse; font-size:13px; text-align:left;">
+              <thead>
+                <tr>
+                  <th>Condition</th>
+                  <th>Patient Reason</th>
+                  <th>Matched Rescue Action</th>
+                  <th>Sample Size</th>
+                  <th>Return Rate %</th>
+                  <th>Days to Return</th>
+                </tr>
+              </thead>
+              <tbody id="whatWorksTbody">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <!-- ==================== FIELD WORKER / SUPERVISOR APP ==================== -->
+      <div id="workerAppView" style="display:none; max-width:540px; margin:0 auto;">
+        <div class="card" style="border-radius:var(--radius); overflow:hidden;">
+          <div style="background:var(--header-bg); color:var(--header-text); padding:18px 20px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <div style="font-size:16px; font-weight:800; font-family:var(--font-display);">Nirantar Field Companion</div>
+                <div style="font-size:12px; color:var(--header-text); font-weight:500;">View tasks as Care Worker or Supervisor</div>
+              </div>
+              <!-- Theme toggle in worker app header -->
+              <button class="theme-toggle-btn" onclick="toggleLightDarkTheme()" title="Toggle theme">
+                <span id="workerQuickToggleIcon">🌙</span>
+              </button>
+            </div>
+
+            <select id="workerAppRoleSwitcher" onchange="switchWorkerAppView(this.value)" style="width:100%; margin-top:10px; padding:8px 12px; border-radius:var(--radius); border:1px solid var(--border); background:var(--surface-2); color:var(--text); font-weight:700; font-size:13px; outline:none; cursor:pointer;">
+              <option value="W-101">Care Worker: Sunita Sharma (W-101)</option>
+              <option value="W-102">Care Worker: Pooja Verma (W-102)</option>
+              <option value="W-103">Care Worker: Manoj Kumar (W-103)</option>
+              <option value="W-104">Care Worker: Rekha Patel (W-104)</option>
+              <option value="SUP-201">Supervisor: Dr. Rajesh Rao (SUP-201)</option>
+              <option value="DOC-301">Doctor: Dr. Ananya Sen (DOC-301)</option>
+            </select>
+          </div>
+
+          <div style="padding:16px; background:var(--bg); min-height:460px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+              <div style="font-size:14px; font-weight:800; color:var(--text);" id="workerQueueTitle">My Assigned Follow-ups</div>
+              <span class="pill pill-safe" id="workerTasksCountBadge">0 tasks</span>
+            </div>
+
+            <div id="workerCardsList">
+              <!-- Dynamically populated cards with tap targets >= 44px -->
+            </div>
+          </div>
+
+          <!-- Bottom Mobile Nav (tap targets >= 44px) -->
+          <div style="display:flex; background:var(--surface); border-top:1px solid var(--border); padding:6px 12px;">
+            <button class="btn worker-tap-target" style="flex:1; border:none; background:transparent; color:var(--primary); font-weight:700; display:flex; flex-direction:column; align-items:center; gap:2px; font-size:11px;">
+              <span>📋</span>
+              <span>My Tasks</span>
+            </button>
+            <button class="btn worker-tap-target" style="flex:1; border:none; background:transparent; color:var(--muted); display:flex; flex-direction:column; align-items:center; gap:2px; font-size:11px;" onclick="scrollToSection('secGapAnalysis'); setAuthPersona('manager');">
+              <span>🗺️</span>
+              <span>Village Rank</span>
+            </button>
+            <button class="btn worker-tap-target" style="flex:1; border:none; background:transparent; color:var(--muted); display:flex; flex-direction:column; align-items:center; gap:2px; font-size:11px;" onclick="handleLogout()">
+              <span>👤</span>
+              <span>Profile</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Synthetic Data Footer Chip -->
+    <footer style="text-align:center; padding:16px; font-size:12px; color:var(--muted); border-top:1px solid var(--border); background:var(--surface);">
+      <span class="pill pill-assigned" style="font-size:11px;">
+        Synthetic demo data · escalation thresholds are placeholders
+      </span>
+    </footer>
+  </div>
+
+  <!-- ======================== MODALS ======================== -->
+  <!-- Assign Task Modal -->
+  <div id="assignModalBackdrop" class="modal-backdrop" style="display:none;">
+    <div class="modal-dialog">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <h3 style="font-size:17px; font-weight:800; color:var(--text);">Assign Follow-up Task</h3>
+        <button class="btn btn-secondary" style="padding:2px 8px;" onclick="closeAssignModal()">✕</button>
+      </div>
+
+      <form onsubmit="handleAssignFormSubmit(event)">
+        <div style="margin-bottom:12px;">
+          <label style="display:block; font-size:11px; font-weight:700; text-transform:uppercase; color:var(--muted); margin-bottom:4px;">Patient</label>
+          <select id="modalAssignPatient" style="width:100%; padding:8px 10px; border-radius:var(--radius); border:1px solid var(--border); background:var(--surface); color:var(--text); font-size:13px;" required></select>
+        </div>
+
+        <div style="margin-bottom:12px;">
+          <label style="display:block; font-size:11px; font-weight:700; text-transform:uppercase; color:var(--muted); margin-bottom:4px;">Care Worker</label>
+          <select id="modalAssignWorker" style="width:100%; padding:8px 10px; border-radius:var(--radius); border:1px solid var(--border); background:var(--surface); color:var(--text); font-size:13px;">
+            <option value="W-101">Sunita Sharma (Kalyanpur/Chandpur)</option>
+            <option value="W-102">Pooja Verma (Rampur/Haripur)</option>
+            <option value="W-103">Manoj Kumar (Bilaspur/Shivpur)</option>
+            <option value="W-104">Rekha Patel (Shivpur Outreach)</option>
+          </select>
+        </div>
+
+        <div style="margin-bottom:12px;">
+          <label style="display:block; font-size:11px; font-weight:700; text-transform:uppercase; color:var(--muted); margin-bottom:4px;">Due Date</label>
+          <input type="date" id="modalAssignDueDate" required style="width:100%; padding:8px 10px; border-radius:var(--radius); border:1px solid var(--border); background:var(--surface); color:var(--text); font-size:13px;">
+        </div>
+
+        <div style="margin-bottom:12px;">
+          <label style="display:block; font-size:11px; font-weight:700; text-transform:uppercase; color:var(--muted); margin-bottom:4px;">Suspected Drop-out Reason</label>
+          <select id="modalAssignReason" style="width:100%; padding:8px 10px; border-radius:var(--radius); border:1px solid var(--border); background:var(--surface); color:var(--text); font-size:13px;">
+            <option value="feels_fine">Feels fine (asymptomatic non-adherence)</option>
+            <option value="no_stock">No medicine stock at PHC</option>
+            <option value="cant_travel">Cannot travel / mobility constraint</option>
+            <option value="lost_wages">Lost wages / wage hours clash</option>
+            <option value="side_effects">Side effects (headache/nausea - URGENT TO DOCTOR)</option>
+          </select>
+        </div>
+
+        <div style="margin-bottom:16px;">
+          <label style="display:block; font-size:11px; font-weight:700; text-transform:uppercase; color:var(--muted); margin-bottom:4px;">Recommended Rescue Protocol</label>
+          <select id="modalAssignAction" style="width:100%; padding:8px 10px; border-radius:var(--radius); border:1px solid var(--border); background:var(--surface); color:var(--text); font-size:13px;">
+            <option value="counselling">Adherence counselling script + buddy nudge</option>
+            <option value="alternate_phc">Redirect to alternate facility with stock</option>
+            <option value="doorstep_refill">Add to village doorstep refill batch</option>
+            <option value="flexible_slot">Evening outreach slot outside peak hours</option>
+            <option value="doctor_consult">Escalate straight to doctor consult</option>
+          </select>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:8px;">
+          <button type="button" class="btn btn-secondary" onclick="closeAssignModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Assign Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Guided Demo Stepper Card -->
+  <div class="guided-demo-card" id="guidedDemoCard" style="display:none;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+      <span style="font-size:12px; font-weight:800; color:var(--primary); text-transform:uppercase;" id="demoStepBadge">Step 1 of 5</span>
+      <button class="btn btn-secondary" style="padding:2px 6px; font-size:10px;" onclick="toggleGuidedDemo()">✕</button>
+    </div>
+    <div style="font-size:14px; font-weight:800; color:var(--text); margin-bottom:4px;" id="demoStepTitle">Assign a Follow-up</div>
+    <div style="font-size:12px; color:var(--muted); line-height:1.5; margin-bottom:12px;" id="demoStepDesc">
+      Pick a flagged patient from the queue or click "Assign Task" to create a new task with a due date.
+    </div>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <button class="btn btn-secondary" style="padding:4px 10px; font-size:11px;" id="demoStepPrev" onclick="navigateDemoStep(-1)">Back</button>
+      <button class="btn btn-primary" style="padding:4px 10px; font-size:11px;" id="demoStepNext" onclick="navigateDemoStep(1)">Next Step &rarr;</button>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div class="toast" id="appToast">
+    <span id="toastIcon">✔</span>
+    <span id="toastMsg">Action completed successfully</span>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

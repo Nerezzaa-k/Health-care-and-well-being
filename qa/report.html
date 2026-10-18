@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Nirantar Phase 8 - QA & Theme Visual Grid</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 24px; }
+    h1, h2, h3 { margin-top: 0; }
+    .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 20px; margin-bottom: 24px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid #334155; font-size: 13px; }
+    th { background: #0f172a; color: #94a3b8; }
+    .pass { color: #4ade80; font-weight: 700; }
+    .fail { color: #f87171; font-weight: 700; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 14px; }
+    .screenshot-card { background: #0f172a; border: 1px solid #334155; border-radius: 8px; overflow: hidden; padding: 10px; }
+    .screenshot-card img { width: 100%; border-radius: 6px; display: block; border: 1px solid #334155; }
+    .screenshot-title { font-weight: 700; margin-bottom: 8px; font-size: 13px; color: #38bdf8; }
+  </style>
+</head>
+<body>
+  <h1>Nirantar Phase 8 — Automated QA Report</h1>
+  <div class="card">
+    <h2>1. Executive Summary Table</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Theme</th>
+          <th>Demo Flow</th>
+          <th>Console Errors</th>
+          <th>axe Color-Contrast</th>
+          <th>Luminance Check</th>
+          <th>No Horiz Scroll (390px)</th>
+          <th>Tap Targets &ge; 44px</th>
+          <th>Keyboard Nav</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+            <tr>
+              <td><strong>Clinical Blue</strong></td>
+              <td class="pass">PASS</td>
+              <td class="pass">0</td>
+              <td class="pass">0 violations</td>
+              <td class="pass">4.91% < 25% lum (limit < 15%)</td>
+              <td class="pass">PASS</td>
+              <td class="pass">PASS</td>
+              <td class="pass">PASS</td>
+              <td class="pass">PASS</td>
+            </tr>
+          
+            <tr>
+              <td><strong>Warm Linen</strong></td>
+              <td class="pass">PASS</td>
+              <td class="pass">0</td>
+              <td class="pass">0 violations</td>
+              <td class="pass">5.91% < 25% lum (limit < 15%)</td>
+              <td class="pass">PASS</td>
+              <td class="pass">PASS</td>
+              <td class="pass">PASS</td>
+              <td class="pass">PASS</td>
+            </tr>
+          
+            <tr>
+              <td><strong>Midnight Navy</strong></td>
+              <td class="pass">PASS</td>
+              <td class="pass">0</td>
+              <td class="pass">0 violations</td>
+              <td class="pass">1.17% > 75% lum (limit < 3%)</td>
+              <td class="pass">PASS</td>
+              <td class="pass">PASS</td>
+              <td class="pass">PASS</td>
+              <td class="pass">PASS</td>
+            </tr>
+          
+            <tr>
+              <td><strong>Graphite</strong></td>
+              <td class="pass">PASS</td>
+              <td class="pass">0</td>
+              <td class="pass">0 violations</td>
+              <td class="pass">2.19% > 75% lum (limit < 3%)</td>
+              <td class="pass">PASS</td>
+              <td class="pass">PASS</td>
+              <td class="pass">PASS</td>
+              <td class="pass">PASS</td>
+            </tr>
+          
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>2. Theme Difference & Pixel Divergence</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Pair Comparison</th>
+          <th>Type</th>
+          <th>Calculated Mean Per-Pixel Diff</th>
+          <th>Threshold</th>
+          <th>Result</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Clinical Blue vs Warm Linen</td>
+          <td>Same-mode Light</td>
+          <td><strong>16.96</strong></td>
+          <td>&ge; 5.0</td>
+          <td class="pass">PASS</td>
+        </tr>
+        <tr>
+          <td>Midnight Navy vs Graphite</td>
+          <td>Same-mode Dark</td>
+          <td><strong>18.67</strong></td>
+          <td>&ge; 5.0</td>
+          <td class="pass">PASS</td>
+        </tr>
+        <tr>
+          <td>Clinical Blue vs Midnight Navy</td>
+          <td>Light vs Dark</td>
+          <td><strong>192.60</strong></td>
+          <td>&ge; 40.0</td>
+          <td class="pass">PASS</td>
+        </tr>
+        <tr>
+          <td>Warm Linen vs Graphite</td>
+          <td>Light vs Dark</td>
+          <td><strong>192.79</strong></td>
+          <td>&ge; 40.0</td>
+          <td class="pass">PASS</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h2>3. Side-by-Side Visual Grid: Manager Dashboard (1440x900)</h2>
+    <div class="grid-4">
+      
+        <div class="screenshot-card">
+          <div class="screenshot-title">Clinical Blue</div>
+          <img src="screens/clinical-blue/manager_1440.png" alt="clinical-blue manager">
+        </div>
+      
+        <div class="screenshot-card">
+          <div class="screenshot-title">Warm Linen</div>
+          <img src="screens/warm-linen/manager_1440.png" alt="warm-linen manager">
+        </div>
+      
+        <div class="screenshot-card">
+          <div class="screenshot-title">Midnight Navy</div>
+          <img src="screens/midnight-navy/manager_1440.png" alt="midnight-navy manager">
+        </div>
+      
+        <div class="screenshot-card">
+          <div class="screenshot-title">Graphite</div>
+          <img src="screens/graphite/manager_1440.png" alt="graphite manager">
+        </div>
+      
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>4. Side-by-Side Visual Grid: Login Screen (1440x900)</h2>
+    <div class="grid-4">
+      
+        <div class="screenshot-card">
+          <div class="screenshot-title">Clinical Blue</div>
+          <img src="screens/clinical-blue/login_1440.png" alt="clinical-blue login">
+        </div>
+      
+        <div class="screenshot-card">
+          <div class="screenshot-title">Warm Linen</div>
+          <img src="screens/warm-linen/login_1440.png" alt="warm-linen login">
+        </div>
+      
+        <div class="screenshot-card">
+          <div class="screenshot-title">Midnight Navy</div>
+          <img src="screens/midnight-navy/login_1440.png" alt="midnight-navy login">
+        </div>
+      
+        <div class="screenshot-card">
+          <div class="screenshot-title">Graphite</div>
+          <img src="screens/graphite/login_1440.png" alt="graphite login">
+        </div>
+      
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>5. Side-by-Side Visual Grid: Worker Companion App (390x844)</h2>
+    <div class="grid-4">
+      
+        <div class="screenshot-card">
+          <div class="screenshot-title">Clinical Blue</div>
+          <img src="screens/clinical-blue/worker_390.png" alt="clinical-blue worker">
+        </div>
+      
+        <div class="screenshot-card">
+          <div class="screenshot-title">Warm Linen</div>
+          <img src="screens/warm-linen/worker_390.png" alt="warm-linen worker">
+        </div>
+      
+        <div class="screenshot-card">
+          <div class="screenshot-title">Midnight Navy</div>
+          <img src="screens/midnight-navy/worker_390.png" alt="midnight-navy worker">
+        </div>
+      
+        <div class="screenshot-card">
+          <div class="screenshot-title">Graphite</div>
+          <img src="screens/graphite/worker_390.png" alt="graphite worker">
+        </div>
+      
+    </div>
+  </div>
+</body>
+</html>
