@@ -70,3 +70,101 @@ Over time, these records can support evaluation and improvement of patient follo
 
 ---
 
+## ✨ Key Features
+
+### 1. Smart Follow-up Prioritization
+Prioritize overdue cases using transparent rules and relevant patient follow-up information.
+
+### 2. Barrier-to-Support Matching
+Connect reported patient barriers with appropriate, available support options.
+
+### 3. Patient Journey Dashboard
+Provide authorized healthcare staff with a consolidated view of a patient's treatment follow-up journey, including scheduled appointments, missed visits, recorded barriers, assigned actions, and follow-up outcomes.
+
+### 4. Follow-up Recovery Tracker
+Track the progress of unresolved cases, from initial contact attempts to rescheduling and completion of follow-up appointments.
+
+### 5. Explainable Risk Assessment
+Display the factors contributing to a patient's risk classification instead of presenting an unexplained prediction.
+
+### 6. Multi-Role Platform
+Support different user roles with appropriate access and functionality:
+
+- **Frontline Healthcare Workers:** Review prioritized cases and coordinate follow-ups.
+- **Patients:** Complete check-ins and report barriers to continuing treatment.
+- **Family Caregivers:** Support follow-up coordination when authorized by the patient.
+- **Healthcare Administrators:** Monitor unresolved cases, follow-up performance, and program-level trends.
+
+### 7. Healthcare Program Insights
+Help organizations understand recurring barriers to treatment continuity and evaluate the outcomes of their follow-up interventions.
+
+### 8. Offline-First Accessibility
+Use Progressive Web App capabilities to support essential workflows in areas with unreliable internet connectivity, with synchronization when connectivity returns.
+
+### 9. Voice-Assisted Reason Capture
+Support voice-based input to make recording patient-reported barriers more accessible for users who have difficulty typing.
+
+### 10. Configurable, Multi-Department Design
+Adapt follow-up schedules, prioritization rules, and support workflows for different medical departments without requiring a separate application for every condition.
+
+---
+
+## 👥 Target Users
+
+| User | Purpose |
+|---|---|
+| Hospitals and Clinics | Manage missed follow-ups and coordinate patient support. |
+| ASHA/ANM Workers and NGOs | Identify patients requiring attention and coordinate follow-up activities. |
+| Patients | Report barriers and stay informed about scheduled follow-ups. |
+| Family Caregivers | Assist with treatment follow-up when authorized. |
+| PHC and District Administrators | Monitor program performance and identify recurring barriers. |
+
+---
+
+## 🛠️ Technology Stack
+
+| Component | Technology |
+|---|---|
+| Frontend | React |
+| Application Architecture | Progressive Web App (PWA) |
+| Backend | FastAPI (Python) |
+| Database | Supabase / PostgreSQL |
+| Maps | Leaflet |
+| Charts and Analytics | Recharts |
+| Voice Input | Browser Speech API |
+| AI Integration | LLM-based assistance, where configured |
+| Communication | SMS / IVR integration (currently mocked) |
+
+---
+
+## 🔄 How Nirantar Works
+
+```text
+Patient Treatment Journey
+          |
+          v
+Appointment or Follow-up Scheduled
+          |
+          v
+Missed Follow-up / Potential Dropout Risk
+          |
+          v
+Explainable Risk Assessment
+          |
+          v
+Patient Barrier Identification
+          |
+          v
+Barrier-to-Support Matching
+          |
+          v
+Follow-up Action Assigned
+          |
+          v
+Patient Contact and Rescheduling
+          |
+          v
+Recovery Tracker Records Outcome
+          |
+          v
+Program Insights and Evaluation
