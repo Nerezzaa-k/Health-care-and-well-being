@@ -137,7 +137,7 @@ Adapt follow-up schedules, prioritization rules, and support workflows for diffe
 
 ---
 
-## 🔄 How Nirantar Works
+## 🔄 MVP Architecture of How Nirantar Works
 
 ```text
 Patient Treatment Journey
@@ -168,3 +168,80 @@ Recovery Tracker Records Outcome
           |
           v
 Program Insights and Evaluation
+
+---
+
+## 🏗️ MVP Architecture
+
+Nirantar follows a modular, API-driven architecture that connects the user interface, backend services, database, and follow-up workflow.
+
+The MVP focuses on four core capabilities:
+
+1. Identifying patients who need follow-up attention.
+2. Recording and understanding the reasons for missed appointments.
+3. Recommending appropriate support actions.
+4. Tracking follow-up progress and outcomes.
+
+### System Architecture
+
+```mermaid
+flowchart TD
+    A[Healthcare Worker / Patient / Authorized Caregiver]
+
+    subgraph Frontend["Frontend Layer"]
+        B[React PWA]
+        C[Patient Dashboard]
+        D[Follow-up Management]
+        E[Barrier Reporting]
+        F[Outcome Tracking]
+    end
+
+    subgraph Backend["Backend Layer - FastAPI"]
+        G[REST API Endpoints]
+        H[Authentication and Role Checks]
+        I[Risk Prioritization Engine]
+        J[Barrier-to-Support Matching]
+        K[Follow-up Recovery Tracker]
+        L[Analytics and Reporting]
+    end
+
+    subgraph Database["Data Layer"]
+        M[(Supabase PostgreSQL)]
+        N[Patient Records]
+        O[Appointments and Barriers]
+        P[Actions and Outcomes]
+    end
+
+    subgraph Integrations["External Integrations"]
+        Q[SMS / IVR - Mocked]
+        R[LLM Assistance - Optional]
+    end
+
+    A --> B
+    B --> C
+    B --> D
+    B --> E
+    B --> F
+
+    C --> G
+    D --> G
+    E --> G
+    F --> G
+
+    G --> H
+    H --> I
+    H --> J
+    H --> K
+    H --> L
+
+    I --> M
+    J --> M
+    K --> M
+    L --> M
+
+    M --- N
+    M --- O
+    M --- P
+
+    K -.-> Q
+    J -.-> R
