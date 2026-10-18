@@ -1,81 +1,72 @@
-# Health-care-and-well-being
-IIITD Hackathon
+# 🏥 Nirantar — AI-Powered Treatment Continuity Platform
 
+### Helping Patients Stay on Track with Long-Term Treatment
 
-# Nirantar
+Nirantar is an AI-powered healthcare follow-up platform designed to help hospitals, healthcare workers, NGOs, and caregivers identify patients at risk of dropping out of long-term treatment.
 
-**Helping people on long-term treatment stay in care.**
+Unlike systems that focus primarily on appointment reminders, Nirantar aims to identify patients who may discontinue treatment, understand the reasons behind missed follow-ups, recommend appropriate support actions, and track whether patients successfully return to care.
 
-Nirantar predicts which patients are about to drop out of long-term treatment, finds out the real reason, and matches the most suitable rescue action — whether the user is a frontline health worker, a family caregiver, or the patient themselves.
+The platform is designed to support multiple medical departments, including diabetes care, hypertension, tuberculosis, oncology, cardiology, and other long-term treatment programs.
 
----
-
-### The Problem
-
-Many patients diagnosed with chronic conditions (Hypertension, Diabetes, TB, Asthma, etc.) receive free medicine but never return for follow-up.  
-
-Generic reminders have shown limited impact. In one Punjab hypertension trial, attendance stayed around **20%** even with WhatsApp reminders and myth-busting messages.
-
-Existing tools mostly track patients *after* they miss a visit. Rescue is usually a manual phone call.
+**Our mission is simple: Don't just remind patients. Understand why they drop out and help them stay in care.**
 
 ---
 
-### The Solution
+## 🚨 The Problem
 
-Nirantar follows a simple but powerful loop:
+Many patients receiving long-term treatment miss follow-up appointments or discontinue treatment before completing their recommended care.
 
-1. **Predict** – An explainable risk score ranks patients likely to drop out, with clear reasons.
-2. **Ask Why** – Worker, patient, or family member selects the real barrier (feels fine, no stock, can’t travel, money, side effects…).
-3. **Act** – The system suggests a targeted action matched to that reason.
-4. **Learn** – Outcomes are logged so the system improves over time (“what works” for each reason and condition).
+This can happen for several reasons:
+- 💰 Financial difficulties and treatment-related expenses.
+- 🚍 Transportation problems and geographical barriers.
+- 💊 Medication availability and concerns about side effects.
+- 🧠 Lack of awareness about the importance of continuing treatment.
+- 📅 Forgotten appointments and scheduling conflicts.
+- ❤️ Limited follow-up support from healthcare providers.
 
-It is **condition-agnostic** — one engine that works across diseases through simple configuration.
+Traditional appointment reminders may not address the underlying reasons patients miss their appointments.
 
----
+Healthcare workers may also struggle to identify high-risk patients, prioritize follow-up efforts, and track whether their interventions are successful.
 
-### Who It’s For
-
-| Role                    | How they use it                              |
-|-------------------------|----------------------------------------------|
-| Frontline Worker (ASHA/ANM/NGO) | Daily ranked risk list + one-tap actions    |
-| Patient                 | Weekly self check-in + reason reporting      |
-| Family Caregiver        | View relative’s status + send nudge          |
-| PHC / District Staff    | Single dashboard with insights & escalations |
+**The challenge is not just identifying missed appointments. It is understanding why patients disengage and coordinating the right response.**
 
 ---
 
-### Key Features
+## 💡 Our Solution
 
-- Explainable dropout risk prediction
-- Reason-aware rescue actions
-- Multi-role mobile app (Worker / Patient / Family)
-- “Why they drop out” system-level insights
-- “What works” learning loop
-- Condition-agnostic design
-- Offline-first Progressive Web App
-- Voice input support for reason capture
+Nirantar introduces a predictive, reason-aware patient follow-up workflow that helps healthcare teams move from passive appointment tracking to proactive patient support.
+
+The platform follows four key stages:
+
+### 1. 🔍 Predict — Identify Patients at Risk
+Identify patients who may be at risk of treatment interruption using explainable risk scores and relevant patient follow-up information.
+
+The system highlights the factors contributing to each risk assessment so healthcare workers can understand why a case needs attention.
+
+### 2. 🧩 Ask Why — Understand the Barrier
+Capture the reasons behind missed appointments or potential treatment interruption through patient check-ins or input from authorized healthcare workers and caregivers.
+
+Possible barriers include transportation difficulties, financial constraints, medication availability, side effects, and missed reminders.
+
+The system does not assume a reason without confirmation.
+
+### 3. 🎯 Act — Match Barriers with Appropriate Support
+Recommend relevant follow-up actions based on the reported barrier.
+
+For example:
+- Forgotten appointment → Offer an appropriate reminder.
+- Transportation difficulty → Check for available transport assistance.
+- Financial difficulty → Identify applicable support programs.
+- Reported side effects → Refer the concern to an appropriate healthcare professional.
+
+Recommendations depend on available resources and healthcare-approved workflows.
+
+### 4. 📊 Learn — Track Outcomes and Improve
+Record follow-up actions and their outcomes to help healthcare organizations understand which approaches appear effective.
+
+The platform can track whether patients were contacted, appointments were rescheduled, and follow-ups were completed.
+
+Over time, these records can support evaluation and improvement of patient follow-up strategies.
 
 ---
 
-### Tech Stack
-
-- **Frontend**: React PWA (Offline-first)
-- **Backend**: FastAPI
-- **Database**: Supabase (PostgreSQL)
-- **Maps & Charts**: Leaflet + Recharts
-- **Voice**: Browser Speech API + LLM
-- **Communication**: SMS / IVR (mocked in current version)
-
----
-
-### Current Status
-
-This is a working prototype built for a hackathon / demonstration.  
-It uses synthetic data and is intended to validate the concept of **reason-aware, predictive rescue** for long-term treatment adherence.
-
----
-
-### Pitch Line
-
-> “Reminders alone don’t bring patients back.  
-> Nirantar finds out why someone is slipping and matches the rescue to the reason.”
